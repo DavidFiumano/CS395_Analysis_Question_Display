@@ -11,79 +11,74 @@ import plotly.graph_objects as go
 
 from .app import app
 
-import os, sys
-
-STUDENT_CODE_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-if STUDENT_CODE_PATH not in sys.path:
-    sys.path.append(STUDENT_CODE_PATH)
-
-from student import createParticulateGraph, createGasGraph, createWeatherGraph, allNodesGraph
+from pages import * # import other page layouts
 
 dropdown_opts = [
     {
-        'label' : 'Gas Sensors',
-        'value' : 'Gas_Graph'
+        'label' : 'Home',
+        'value' : 'Home'
     },
     {
-        'label' : 'Particle Sensors',
-        'value' : 'Particle_Graph'
+        'label' : 'Question 1',
+        'value' : 'Q1'
     },
     {
-        'label' : 'Weather Sensors',
-        'value' : 'Weather_Graph'
+        'label' : 'Question 2',
+        'value' : 'Q2'
     },
     {
-        'label' : 'All Nodes',
-        'value' : 'All_Nodes_Graph'
+        'label' : 'Question 3',
+        'value' : 'Q3'
+    },
+    {
+        'label' : 'Question 4',
+        'value' : 'Q4'
+    },
+    {
+        'label' : 'Question 5',
+        'value' : 'Q5'
+    },
+    {
+        'label' : 'Question 6',
+        'value' : 'Q6'
+    },
+    {
+        'label' : 'Question 7',
+        'value' : 'Q7'
     }
 ]
 
 app.layout = html.Div(
     children=[
-                html.H1("CS 395 Project 0"),
-                dcc.Dropdown(id='graph_selector', options=dropdown_opts, value='All_Nodes_Graph'),
-                html.Button('Take an Interactive Snapshot', id='graph_snapshot_button', n_clicks=0),
-                html.H3(id='snapshot_text'),
-                dcc.Graph(id='student_graph')
+                html.H1("CS 395 Project 1 Analysis Questions"),
+                html.H3("Change Question and Question Data here: "),
+                dcc.Dropdown(id="main_dropdown", options=dropdown_opts, value="Home")
+                html.Div(id="content-div")
             ]
 )
 
 @app.callback(
-    Output('student_graph', 'figure'),
+    Output('content-div', 'children'),
     [
-        Input('graph_selector', 'value')
+        Input('main_dropdown', 'value')
     ]
 )
-def create_app_callback(value):
-    if value == None:
-        return createWeatherGraph()
-    elif value == 'Weather_Graph':
-        return createWeatherGraph()
-    elif value == 'Gas_Graph':
-        return createGasGraph()
-    elif value == 'Particle_Graph':
-        return createParticulateGraph()
-    elif value == "All_Nodes_Graph":
-        return allNodesGraph()
+def main_dropdown_callback(value):
+    if value == 'Home':
+        return Home.layout
+    elif value == 'Q1':
+        return Q1.layout
+    elif value == 'Q2':
+        return Q2.layout
+    elif value == 'Q3':
+        return Q3.layout
+    elif value == 'Q4':
+        return Q4.layout
+    elif value == 'Q5':
+        return Q5.layout
+    elif value == 'Q6':
+        return Q6.layout
+    elif value == 'Q7':
+        return Q7.layout
     else:
-        print('For some reason, the graph selector was set to an unknown value: ' + str(value) + '\nDefaulting to Weather graph.')
-        return createWeatherGraph()
-
-@app.callback(
-    Output('snapshot_text', 'children'),
-    [
-        Input('graph_snapshot_button', 'n_clicks')
-    ],
-    [
-        State('student_graph', 'figure')
-    ]
-)
-def take_graph_snapshot(n_clicks, figure):
-    if n_clicks == None or n_clicks == 0:
-        return 'No Snapshots Taken Yet...'
-    else:
-        fig = go.Figure(figure)
-        snapshot_file = 'student_snapshot_' + str(n_clicks) + '.html'
-        fig.write_html(snapshot_file, include_plotlyjs='cdn')
-        return 'Most Recent Snapshot Saved in ' + snapshot_file
+        return html.H1("Invalid option selected")
