@@ -71,7 +71,7 @@ layout = html.Div(
         html.Div(
             [
                 html.H1("Select Sensors to Graph"),
-                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 25, 26, 27, 28, 29, 30])
+                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 25, 26, 27, 28, 29, 30], searchable=True),
                 dcc.Dropdown(id='node_dropdown', options=sensor_opts, value=sensor_opts[0]['value']),
                 dcc.Dropdown(id='subsystem', disabled=True),
                 dcc.Dropdown(id='sensor', disabled=True),
@@ -158,6 +158,7 @@ def sensor_selector_callback(current_subsystem, current_node):
     [
         Output('parameter', 'options'),
         Output('parameter', 'value'),
+        Output('parameter', 'disabled')
     ],
     [
         Input('sensor', 'value')
@@ -186,7 +187,7 @@ def sensor_selector_callback(current_sensor, current_subsystem, current_node):
             }
         )
 
-    return (opts, opts[0]['value'])
+    return (opts, opts[0]['value'], False)
 
 @app.callback(
     Output('sensor_graph', 'figure'),
@@ -196,18 +197,56 @@ def sensor_selector_callback(current_sensor, current_subsystem, current_node):
     [
         State('sensor', 'value'),
         State('subsystem', 'value'),
-        State('node_dropdown', 'value')
+        State('node_dropdown', 'value'),
+        State('days', 'value')
     ]
 )
-def update_graph(current_parameter, current_sensor, current_subsystem, current_node):
+def update_graph(current_parameter, current_sensor, current_subsystem, current_node, days):
 
     data = filterByNodeId(AOT_DATA, current_node)
     graph_data = filterBySensorPath(data, 
                                     subsystem = current_subsystem,
                                     sensor = current_sensor,
-                                    current_node = current_node)
+                                    parameter = current_parameter)
     
-    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    # generate x_axis
+    x_axis = range(0, 1440) # minutes in a day
 
-    day_traces
+    # get data
+    days = set(days) # prevent duplicate values from breaking stuff
+
+    # colors
+    colors = {
+        24 : 'red',
+        25 : 'green',
+        26 : 'blue',
+        27 : 'purple',
+        28 : 'yellow',
+        29 : 'orange',
+        30 : 'pink'
+    }
+
+    # create figure
+    fig = go.Figure()
+
+    # traces
+    # make a trace for each day
     for day in days:
+        day_data = filterByDay(graph_data, datetime(month=8, day=day, year=2020).date())
+
+        # get data into usable format
+        time = day_data['time'].tolist()
+        value_hrf = day_data['value_hrf'].tolist()
+
+        trace = go.Scattergl(
+            x = day_data['time'].tolist(),
+            y = day_data['value_hrf'].tolist(),
+            mode="markers",
+            marker={
+                'color' : colors[day]
+            }
+        )
+        fig.add_trace(trace)
+
+    return fig
+
