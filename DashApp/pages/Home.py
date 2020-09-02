@@ -70,19 +70,42 @@ processing_opts = [
     {
         'label' : 'Moving Average',
         'value' : 'moving_average'
-    },
-    {
-        'label' : 'Remove Outliers',
-        'value' : 'outliers'
     }
 ]
 
+scattermapbox = go.Figure(
+    go.Scattermapbox(
+        name="All Node Map",
+        mode="markers",
+        lat=list(),
+        lon=list(),
+        marker = {
+            'size' : 10
+        }
+    )
+)
+
+scattermapbox.update_layout(
+        mapbox_style="open-street-map", # this is absolutely required - open-street-map is easy to use, the other styles require an api key and have annoying limitations 
+        margin={"r":0,"t":0,"l":0,"b":0}, # This is optional, but specifies the margins of the map in the page
+        mapbox= # If you do not include this (centering and zooming on your map), you will lose points. Please include it so we don't have to zoom in a ton to grade your stuff
+            {
+                "center" : go.layout.mapbox.Center(
+                    lat=41.8781, # this is chicago's GPS coordinates according to google maps
+                    lon=-87.6298
+                ),
+                "zoom" : 9 # set this to something reasonable for you and your computer. 
+                # As long as we can see all the nodes and don't need to move or zoom into the graph too much to find them all, I am happy with whatever you set the 'zoom' value to
+            }
+    )
+
 layout = html.Div(
     [
-        dcc.Graph(id="map", figure=go.Figure()),
+        html.H2("All Nodes Reporting (8/24/2020 - 8/30/2020)"),
+        dcc.Graph(id="map", figure=scattermapbox),
         html.Div(
             [
-                html.H1("Select Sensors to Graph"),
+                html.H2("Select Sensors to Graph"),
                 dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 29], searchable=True),
                 dcc.Dropdown(id='node_dropdown', options=sensor_opts, value=sensor_opts[0]['value']),
                 dcc.Dropdown(id='subsystem', disabled=True),
@@ -94,7 +117,7 @@ layout = html.Div(
         ),
         html.Div(
             [
-                html.H1("Sensor Graph"),
+                html.H2("Sensor Graph"),
                 dcc.Graph(id='sensor_graph', figure=px.scatter())
             ],
             style={'width' : '49%', 'display' : 'inline-block', 'vertical-align' : 'top'}
