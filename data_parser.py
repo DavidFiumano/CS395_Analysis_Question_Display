@@ -2,7 +2,6 @@ import pandas as pd
 import os.path as path
 from datetime import datetime, timedelta
 from typing import List
-from aot_api.AOTNode import Measurement
 
 AOT_DATA = None # cache the data in memory so readEverything() is only slow once
 AOT_DATA_CACHED = False # bool (whether or not data is cached or not)
