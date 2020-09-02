@@ -79,6 +79,7 @@ processing_opts = [
 
 layout = html.Div(
     [
+        dcc.Graph(id="map", figure=go.Figure()),
         html.Div(
             [
                 html.H1("Select Sensors to Graph"),
