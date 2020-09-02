@@ -73,12 +73,30 @@ processing_opts = [
     }
 ]
 
+lats = list()
+lons = list()
+for node in node_ids:
+    print(node)
+
+    node_data = filterByNodeId(AOT_DATA, node)
+    node_datum = node_data.head(1)
+
+    lat = 0
+    lon = 0
+
+    lat = node_datum['latitude'].tolist()[0]
+    lon = node_datum['longitude'].tolist()[0]
+
+    lats.append(lat)
+    lons.append(lon)
+
+
 scattermapbox = go.Figure(
     go.Scattermapbox(
         name="All Node Map",
         mode="markers",
-        lat=list(),
-        lon=list(),
+        lat=lats,
+        lon=lons,
         marker = {
             'size' : 10
         }
