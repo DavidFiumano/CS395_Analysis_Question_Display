@@ -76,7 +76,6 @@ processing_opts = [
 lats = list()
 lons = list()
 for node in node_ids:
-    print(node)
 
     node_data = filterByNodeId(AOT_DATA, node)
     node_datum = node_data.head(1)
