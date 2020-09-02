@@ -1,3 +1,7 @@
+# PANDAS AND NUMPY
+import pandas as pd
+import numpy as np
+
 # DASH
 import dash
 import dash_core_components as dcc
@@ -75,6 +79,9 @@ processing_opts = [
 
 lats = list()
 lons = list()
+names = list()
+subsystems_reporting = list()
+sizes = list()
 for node in node_ids:
 
     node_data = filterByNodeId(AOT_DATA, node)
@@ -85,10 +92,15 @@ for node in node_ids:
 
     lat = node_datum['latitude'].tolist()[0]
     lon = node_datum['longitude'].tolist()[0]
+    name = node_datum['node_id'].tolist()[0]
+
+    subsystems = node_data.subsystem.unique()
+    subsystems_reporting.append(str(subsystems))
+    sizes.append(len(subsystems)*5 + 10)
 
     lats.append(lat)
     lons.append(lon)
-
+    names.append(name)
 
 scattermapbox = go.Figure(
     go.Scattermapbox(
@@ -96,9 +108,15 @@ scattermapbox = go.Figure(
         mode="markers",
         lat=lats,
         lon=lons,
+        text=names,
+        customdata=np.stack([names, subsystems_reporting], axis=-1),
+        hovertemplate="Node %{customdata[0]}<br>" +
+                      "Location: (%{lat}, %{lon})<br>" +
+                      "Subsystems Reporting: %{customdata[1]}",
         marker = {
-            'size' : 10
-        }
+            'size' : sizes
+        },
+
     )
 )
 
@@ -130,14 +148,14 @@ layout = html.Div(
                 dcc.Dropdown(id='parameter', disabled=True),
                 dcc.Dropdown(id='process_data', multi=True, options=processing_opts, value=[], searchable=True, placeholder="Preprocessing Options")
             ],
-            style={'width' : '49%', 'display' : 'inline-block', 'vertical-align' : 'middle'}
+            style={'width' : '32%', 'display' : 'inline-block', 'vertical-align' : 'middle'}
         ),
         html.Div(
             [
                 html.H2("Sensor Graph"),
                 dcc.Graph(id='sensor_graph', figure=px.scatter())
             ],
-            style={'width' : '49%', 'display' : 'inline-block', 'vertical-align' : 'top'}
+            style={'width' : '67%', 'display' : 'inline-block', 'vertical-align' : 'top'}
         )
     ]
 )
