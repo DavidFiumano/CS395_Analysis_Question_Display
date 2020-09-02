@@ -87,7 +87,7 @@ layout = html.Div(
                 dcc.Dropdown(id='subsystem', disabled=True),
                 dcc.Dropdown(id='sensor', disabled=True),
                 dcc.Dropdown(id='parameter', disabled=True),
-                dcc.Dropdown(id='process_data', multi=True, options=processing_opts, value=['moving_average'], searchable=True, placeholder="Preprocessing Options")
+                dcc.Dropdown(id='process_data', multi=True, options=processing_opts, value=[], searchable=True, placeholder="Preprocessing Options")
             ],
             style={'width' : '49%', 'display' : 'inline-block', 'vertical-align' : 'middle'}
         ),
