@@ -141,7 +141,7 @@ layout = html.Div(
         html.Div(
             [
                 html.H2("Select Sensors to Graph"),
-                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 29], searchable=True),
+                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24], searchable=True),
                 dcc.Dropdown(id='node_dropdown', options=sensor_opts, value=sensor_opts[0]['value']),
                 dcc.Dropdown(id='subsystem', disabled=True),
                 dcc.Dropdown(id='sensor', disabled=True),
