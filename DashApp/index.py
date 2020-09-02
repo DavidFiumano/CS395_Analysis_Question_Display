@@ -51,7 +51,7 @@ dropdown_opts = [
 app.layout = html.Div(
     children=[
                 html.H1("CS 395 Project 1 Analysis Questions"),
-                html.H2("Change Question and Question Data here: "),
+                html.H2("Change Question and Question Data Here: "),
                 dcc.Dropdown(id="main_dropdown", options=dropdown_opts, value="Home"),
                 html.Div(id="content-div")
             ]
