@@ -66,16 +66,28 @@ day_opts = [
     },
 ]
 
+processing_opts = [
+    {
+        'label' : 'Moving Average',
+        'value' : 'moving_average'
+    },
+    {
+        'label' : 'Remove Outliers',
+        'value' : 'outliers'
+    }
+]
+
 layout = html.Div(
     [
         html.Div(
             [
                 html.H1("Select Sensors to Graph"),
-                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 25, 26, 27, 28, 29, 30], searchable=True),
+                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 29], searchable=True),
                 dcc.Dropdown(id='node_dropdown', options=sensor_opts, value=sensor_opts[0]['value']),
                 dcc.Dropdown(id='subsystem', disabled=True),
                 dcc.Dropdown(id='sensor', disabled=True),
-                dcc.Dropdown(id='parameter', disabled=True)
+                dcc.Dropdown(id='parameter', disabled=True),
+                dcc.Dropdown(id='process_data', multi=True, options=processing_opts, value=['moving_average'], searchable=True, placeholder="Preprocessing Options")
             ],
             style={'width' : '49%', 'display' : 'inline-block', 'vertical-align' : 'middle'}
         ),
@@ -192,7 +204,9 @@ def sensor_selector_callback(current_sensor, current_subsystem, current_node):
 @app.callback(
     Output('sensor_graph', 'figure'),
     [
-        Input('parameter', 'value')
+        Input('parameter', 'value'),
+        Input('process_data', 'value'),
+        Input('days', 'value')
     ],
     [
         State('sensor', 'value'),
@@ -201,7 +215,10 @@ def sensor_selector_callback(current_sensor, current_subsystem, current_node):
         State('days', 'value')
     ]
 )
-def update_graph(current_parameter, current_sensor, current_subsystem, current_node, days):
+def update_graph(current_parameter, processing_settings, day, current_sensor, current_subsystem, current_node, days):
+
+    if current_parameter == None:
+        raise dash.exceptions.PreventUpdate()
 
     data = filterByNodeId(AOT_DATA, current_node)
     graph_data = filterBySensorPath(data, 
@@ -226,6 +243,17 @@ def update_graph(current_parameter, current_sensor, current_subsystem, current_n
         30 : 'pink'
     }
 
+    # day of the week
+    dotw = {
+        24 : 'Monday',
+        25 : 'Tuesday',
+        26 : 'Wednesday',
+        27 : 'Thursday',
+        28 : 'Friday',
+        29 : 'Saturday',
+        30 : 'Sunday'
+    }
+
     # create figure
     fig = go.Figure()
 
@@ -234,19 +262,41 @@ def update_graph(current_parameter, current_sensor, current_subsystem, current_n
     for day in days:
         day_data = filterByDay(graph_data, datetime(month=8, day=day, year=2020).date())
 
-        # get data into usable format
-        time = day_data['time'].tolist()
-        value_hrf = day_data['value_hrf'].tolist()
+        times = day_data['time'].tolist()
+         
+        if 'moving_average' in processing_settings:
+            # get data into usable format
+            day_data_rolling = day_data['value_hrf'].rolling(10).mean()
+            trace = go.Scattergl(
+                x = times,
+                y = day_data_rolling,
+                name = dotw[day],
+                showlegend=True,
+                mode="lines",
+                marker={
+                    "color" : colors[day]
+                }
+            )
+            fig.add_trace(trace)
+        else:
+            trace = go.Scattergl(
+                x = times,
+                y = day_data['value_hrf'].tolist(),
+                name = dotw[day],
+                showlegend=True,
+                mode="markers",
+                marker={
+                    'color' : colors[day]
+                }
+            )
+            fig.add_trace(trace)
 
-        trace = go.Scattergl(
-            x = day_data['time'].tolist(),
-            y = day_data['value_hrf'].tolist(),
-            mode="markers",
-            marker={
-                'color' : colors[day]
-            }
-        )
-        fig.add_trace(trace)
+    
+    fig.update_layout(
+        title_text=current_parameter + " Over Time",
+        xaxis_title="Time (12:00 am to 11:59 pm)",
+        yaxis_title=current_parameter
+    )
 
     return fig
 
