@@ -4,6 +4,9 @@ from datetime import datetime, timedelta
 from typing import List
 from aot_api.AOTNode import Measurement
 
+AOT_DATA = None # cache the data in memory so readEverything() is only slow once
+AOT_DATA_CACHED = False # bool (whether or not data is cached or not)
+
 # read in the data
 def readData(filepath : str) -> pd.DataFrame:
     print("Reading in measurements...")
@@ -18,12 +21,17 @@ def readNodes(filepath : str) -> pd.DataFrame:
     return df
 
 # reads in the data, reads in the nodes, returns a combined dataframe associates each measurement with a latitude, longitude, street address and description
-def readEverything(processed_data_path : str = 'data/preprocessed_data.hdf5', data_path : str = 'data/data.csv', node_path : str = 'data/nodes.csv'):
-    
-    if path.exists(processed_data_path):
+def getData(processed_data_path : str = 'data/preprocessed_data.hdf5', data_path : str = 'data/data.csv', node_path : str = 'data/nodes.csv'):
+
+    global AOT_DATA, AOT_DATA_CACHED
+    if AOT_DATA_CACHED:
+        return AOT_DATA.copy()
+    elif path.exists(processed_data_path):
         print("Reading cached preprocessed data...")
         df = pd.read_hdf(processed_data_path, key='df')
-        return df
+        AOT_DATA = df
+        AOT_DATA_CACHED = True
+        return AOT_DATA
     else:
         data = readData(data_path)
         nodes = readNodes(node_path)
@@ -79,4 +87,6 @@ def readEverything(processed_data_path : str = 'data/preprocessed_data.hdf5', da
         df = pd.DataFrame.from_dict(df)
         print("Writing new dataframe to cache location...")
         df.to_hdf(processed_data_path, key='df')
-        return df
+        AOT_DATA = df
+        AOT_DATA_CACHED = True
+        return AOT_DATA

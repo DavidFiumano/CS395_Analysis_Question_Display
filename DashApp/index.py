@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 from .app import app
 
-from pages import * # import other page layouts
+from .pages import Home, Q1, Q2, Q3, Q4, Q5, Q6, Q7 # import other page layouts
 
 dropdown_opts = [
     {
@@ -52,7 +52,7 @@ app.layout = html.Div(
     children=[
                 html.H1("CS 395 Project 1 Analysis Questions"),
                 html.H3("Change Question and Question Data here: "),
-                dcc.Dropdown(id="main_dropdown", options=dropdown_opts, value="Home")
+                dcc.Dropdown(id="main_dropdown", options=dropdown_opts, value="Home"),
                 html.Div(id="content-div")
             ]
 )

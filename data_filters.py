@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 # filters the data frame so that it only includes data on a specific day
 def filterByDay(df : pd.DataFrame, day : datetime.date):
