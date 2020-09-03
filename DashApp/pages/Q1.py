@@ -33,6 +33,19 @@ AOT_DATA = getData()
 
 node_ids = AOT_DATA.node_id.unique()
 
+color_map = {
+    '001e061184a3' : 'red',
+    '001e0610ee36' : 'green',
+    '001e0610fb4c' : 'purple',
+    '001e0611462f' : 'yellow',
+    '001e061183bf' : 'orange',
+    '001e06113acb' : 'black',
+    '001e0610f703' : 'pink',
+    '001e0610f05c' : 'gray',
+    '001e06113107' : 'darkred',
+    '001e061183f5' : 'blue'
+}
+
 lats = list()
 lons = list()
 names = list()
@@ -59,12 +72,8 @@ for node in node_ids:
     lons.append(lon)
     names.append(name)
 
-    if name == '001e061184a3':
-        colors.append('red')
-    elif name == '001e0610ee36':
-        colors.append('green')
-    elif name == '001e0610fb4c':
-        colors.append('purple')
+    if name in color_map.keys():
+        colors.append(color_map[name])
     else:
         colors.append('blue')
 
@@ -75,9 +84,10 @@ scattermapbox = go.Figure(
         lat=lats,
         lon=lons,
         text=names,
-        customdata=np.stack([names], axis=-1),
+        customdata=np.stack([names, subsystems_reporting], axis=-1),
         hovertemplate="Node %{customdata[0]}<br>" +
-                      "Location: (%{lat}, %{lon})<br>",
+                      "Location: (%{lat}, %{lon})<br>" +
+                      "Subsystems: %{customdata[1]}",
         marker = {
             'size' : sizes,
             'color' : colors
@@ -115,17 +125,21 @@ layout = html.Div(
                             first_day_of_week=1
                            ),
         html.H3("Answer the following questions on blackboard for Q1 Part A:"),
-        "(1 pt) What day was node 001e061184a3 (the red one) activated during the week?", html.Br(), html.Br(),
+        "(1 pt) What day was node 001e061184a3 (the lighter red one) activated during the week?", html.Br(), html.Br(),
         "(1 pt) What about node 001e0610ee36 (the green one)?", html.Br(), html.Br(),
         "(1 pt) What day was node 001e0610fb4c (the purple one) turned on?", html.Br(), html.Br(),
         html.H2("Part B:"),
         "Knowing when these nodes turned on/off can let you figure out what information nodes can help you find. On blackboard answer the following: ", html.Br(), html.Br(),
-        "(2 pts) Node 001e610fb4c (the purple one) had a Honeywell HIH-4030 % Humidity sensor onboard.",
-        "If, for some reason, we had reason to believe that the humidity in that area was going to be higher that at other nodes on Thursday (8/27) that week, could we observe this in the data available?",
+        "(2 pts) Node 001e610fb4c (the purple one) had a Honeywell HIH-4030 % Humidity sensor onboard. If, for some reason, we had reason to believe that the humidity in that area was going to be higher that at other nodes on Thursday (8/27) that week, could we observe this in the data available?",
         html.Br(), html.Br(),
         "Some sensor subsystems are more useful for answering some questions about the environment than others. For example, the chemsense subsystem can be used to learn information about the chemicals in the air around the sensors.",
         html.Br(), html.Br(),
-        "Knowing this, we can combine the information on this page with the visualizations on the home page to answer the following questions:", html.Br(), html.Br()
+        "Knowing this, we can combine the information on this page with the visualizations on the home page to answer the following questions:", html.Br(), html.Br(),
+        "(3 pts) Say that there was an accident at the Stockyards Industrial Corridor (zoom in near the yellow node to see this location) on the morning of the 29th and the wind was blowing south to north that day. We might want to track the spread of smoke from accident to assess the impact of the accident on public health.",
+        "Which nodes might be able to help us assess the effect of the disaster on air quality (just say the colors of the nodes, no need to worry about the node name)?",
+        html.Br(),
+        "Hint: However over the nodes to see which nodes have what sensors. The sensor subsystems that might help with this are: chemsense (detect chemicals in the smoke), plantower (detect the smoke particles) and lightsense (detect the how much the smoke obscures sunlight).",
+        html.Br(), html.Br()
     ]
 )
 
@@ -174,12 +188,10 @@ def date_filterer(start_date, end_date):
         lons.append(lon)
         names.append(name)
 
-        if name == '001e061184a3':
-            colors.append('red')
-        elif name == '001e0610ee36':
-            colors.append('green')
-        elif name == '001e0610fb4c':
-            colors.append('purple')
+        global color_map
+
+        if name in color_map.keys():
+            colors.append(color_map[name])
         else:
             colors.append('blue')
 
@@ -190,9 +202,10 @@ def date_filterer(start_date, end_date):
             lat=lats,
             lon=lons,
             text=names,
-            customdata=np.stack([names], axis=-1),
+            customdata=np.stack([names, subsystems_reporting], axis=-1),
             hovertemplate="Node %{customdata[0]}<br>" +
-                        "Location: (%{lat}, %{lon})<br>",
+                          "Location: (%{lat}, %{lon})<br>" +
+                          "Subsystems: %{customdata[1]}",
             marker = {
                 'size' : sizes,
                 'color' : colors
