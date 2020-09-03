@@ -52,6 +52,8 @@ names = list()
 subsystems_reporting = list()
 sizes = list()
 colors = list()
+addresses = list()
+descriptions = list()
 for node in node_ids:
 
     node_data = filterByNodeId(AOT_DATA, node)
@@ -63,6 +65,8 @@ for node in node_ids:
     lat = node_datum['latitude'].tolist()[0]
     lon = node_datum['longitude'].tolist()[0]
     name = node_datum['node_id'].tolist()[0]
+    address = node_datum['address'].tolist()[0]
+    description = node_datum['description'].tolist()[0]
 
     subsystems = node_data.subsystem.unique()
     subsystems_reporting.append(str(subsystems))
@@ -71,6 +75,8 @@ for node in node_ids:
     lats.append(lat)
     lons.append(lon)
     names.append(name)
+    addresses.append(address)
+    descriptions.append(description)
 
     if name in color_map.keys():
         colors.append(color_map[name])
@@ -84,10 +90,12 @@ scattermapbox = go.Figure(
         lat=lats,
         lon=lons,
         text=names,
-        customdata=np.stack([names, subsystems_reporting], axis=-1),
+        customdata=np.stack([names, subsystems_reporting, addresses, descriptions], axis=-1),
         hovertemplate="Node %{customdata[0]}<br>" +
                       "Location: (%{lat}, %{lon})<br>" +
-                      "Subsystems: %{customdata[1]}",
+                      "Subsystems: %{customdata[1]}<br>" +
+                      "Address: %{customdata[2]}<br>" +
+                      "Description: %{customdata[3]}",
         marker = {
             'size' : sizes,
             'color' : colors
@@ -106,8 +114,7 @@ scattermapbox.update_layout(
                 ),
                 "zoom" : 9 # set this to something reasonable for you and your computer. 
                 # As long as we can see all the nodes and don't need to move or zoom into the graph too much to find them all, I am happy with whatever you set the 'zoom' value to
-            },
-        clickmode="event+select"
+            }
     )
 
 # layout
