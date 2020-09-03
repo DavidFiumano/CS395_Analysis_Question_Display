@@ -11,7 +11,10 @@ from dash.dependencies import Input, Output, State
 # PLOTLY
 import plotly.graph_objects as go
 import plotly.express as px
-import plotly
+from plotly.subplots import make_subplots
+
+# DATETIME
+from datetime import time
 
 # CUSTOM CODE
 import os.path as path 
@@ -131,7 +134,8 @@ scattermapbox.update_layout(
                 ),
                 "zoom" : 9 # set this to something reasonable for you and your computer. 
                 # As long as we can see all the nodes and don't need to move or zoom into the graph too much to find them all, I am happy with whatever you set the 'zoom' value to
-            }
+            },
+        clickmode="event+select"
     )
 
 layout = html.Div(
@@ -141,7 +145,7 @@ layout = html.Div(
         html.Div(
             [
                 html.H2("Select Sensors to Graph"),
-                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24], searchable=True),
+                dcc.Dropdown(id='days', multi=True, options=day_opts, value=[24, 29], searchable=True),
                 dcc.Dropdown(id='node_dropdown', options=sensor_opts, value=sensor_opts[0]['value']),
                 dcc.Dropdown(id='subsystem', disabled=True),
                 dcc.Dropdown(id='sensor', disabled=True),
@@ -180,6 +184,8 @@ def subsystem_selector_callback(current_node):
 
     subsystem_data = filterByNodeId(AOT_DATA, current_node)
     subsystems = subsystem_data.subsystem.unique()
+    if len(subsystems) == 0:
+        raise dash.exceptions.PreventUpdate("Could not update subsystems, since there are not any.")
 
     for subsystem in subsystems:
         opts.append(
@@ -299,7 +305,7 @@ def update_graph(current_parameter, processing_settings, day, current_sensor, cu
         27 : 'purple',
         28 : 'yellow',
         29 : 'orange',
-        30 : 'pink'
+        30 : 'black'
     }
 
     # day of the week
@@ -313,42 +319,54 @@ def update_graph(current_parameter, processing_settings, day, current_sensor, cu
         30 : 'Sunday'
     }
 
-    # create figure
-    fig = go.Figure()
+    n_cols = 2
 
+    # create figure
+    fig = make_subplots(1, n_cols)
+    col = 0
     # traces
     # make a trace for each day
     for day in days:
+        current_dotw = dotw[day]
         day_data = filterByDay(graph_data, datetime(month=8, day=day, year=2020).date())
 
         times = day_data['time'].tolist()
-         
+
+        col += 1
+
         if 'moving_average' in processing_settings:
             # get data into usable format
             day_data_rolling = day_data['value_hrf'].rolling(10).mean()
             trace = go.Scattergl(
                 x = times,
+                x0 = time(hour=0, minute=0, second=0),
+                #dx = time(minute = 1),
                 y = day_data_rolling,
-                name = dotw[day],
+                name = current_dotw,
                 showlegend=True,
                 mode="lines",
                 marker={
                     "color" : colors[day]
                 }
             )
-            fig.add_trace(trace)
+            fig.add_trace(trace, row = 1, col = col)
         else:
             trace = go.Scattergl(
                 x = times,
+                x0 = time(hour=0, minute=0, second=0),
+                #dx = time(minute = 1),
                 y = day_data['value_hrf'].tolist(),
-                name = dotw[day],
+                name = current_dotw,
                 showlegend=True,
                 mode="markers",
                 marker={
                     'color' : colors[day]
                 }
             )
-            fig.add_trace(trace)
+            fig.add_trace(trace, row = 1, col = col)
+
+        if col == n_cols:
+            break
 
     
     fig.update_layout(
@@ -359,3 +377,11 @@ def update_graph(current_parameter, processing_settings, day, current_sensor, cu
 
     return fig
 
+@app.callback(
+    Output('node_dropdown', 'value'),
+    [
+        Input('map', 'clickData')
+    ]
+)
+def click_selector(clickData):
+    return clickData['points'][0]['customdata'][0]

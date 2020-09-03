@@ -15,6 +15,18 @@ def filterByTime(df : pd.DataFrame, start_time : datetime.time, end_time : datet
     time_df = df[filter_time]
     return time_df
 
+# filters the data frame so that it only includes data in a specific range of dates (incl.)
+def filterByDateRange(df : pd.DataFrame, start : datetime, end : datetime):
+    start_day = start.date()
+    end_day = end.date()
+    
+    filter_start_date = df['date'] >= start_day
+    filter_end_date = df['date'] <= end_day
+
+    filter_date = filter_start_date & filter_end_date
+
+    return df[filter_date]
+
 # filter the data by node id
 def filterByNodeId(df : pd.DataFrame, node_id : str):
     filter_node_id = df['node_id'] == node_id
