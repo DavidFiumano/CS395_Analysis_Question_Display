@@ -28,6 +28,7 @@ if PROJECT_ROOT not in sys.path:
 from data_parser import getData
 from data_filters import *
 from DashApp.app import app
+from . import color_map
 
 AOT_DATA = getData()
 
@@ -85,6 +86,8 @@ lons = list()
 names = list()
 subsystems_reporting = list()
 sizes = list()
+addresses = list()
+colors = list()
 for node in node_ids:
 
     node_data = filterByNodeId(AOT_DATA, node)
@@ -96,6 +99,7 @@ for node in node_ids:
     lat = node_datum['latitude'].tolist()[0]
     lon = node_datum['longitude'].tolist()[0]
     name = node_datum['node_id'].tolist()[0]
+    address = node_datum['address'].tolist()[0]
 
     subsystems = node_data.subsystem.unique()
     subsystems_reporting.append(str(subsystems))
@@ -104,6 +108,12 @@ for node in node_ids:
     lats.append(lat)
     lons.append(lon)
     names.append(name)
+    addresses.append(address)
+
+    if name in color_map:
+        colors.append(color_map[name])
+    else:
+        colors.append('blue')
 
 scattermapbox = go.Figure(
     go.Scattermapbox(
@@ -112,12 +122,14 @@ scattermapbox = go.Figure(
         lat=lats,
         lon=lons,
         text=names,
-        customdata=np.stack([names, subsystems_reporting], axis=-1),
+        customdata=np.stack([names, subsystems_reporting, addresses], axis=-1),
         hovertemplate="Node %{customdata[0]}<br>" +
                       "Location: (%{lat}, %{lon})<br>" +
-                      "Subsystems Reporting: %{customdata[1]}",
+                      "Subsystems Reporting: %{customdata[1]}<br>" +
+                      "Address: %{customdata[2]}",
         marker = {
-            'size' : sizes
+            'size' : sizes,
+            'color' : colors
         },
 
     )
