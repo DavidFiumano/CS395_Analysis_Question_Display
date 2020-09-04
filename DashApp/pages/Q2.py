@@ -184,8 +184,6 @@ layout = html.Div(
                 html.Br(), html.Br(),
                 html.H2("Part A"),
                 "(1 pt) This node has two sensor subsystems on it, metsense and lightsense. Do both appear to be working properly? How do you know?",
-                html.H2("Part B"),
-                "This node has a few interesting sensors on it. The metsense subsystem has an accelerometer and a sound intensity sensor in addition to its meteorological sensors.",
                 html.Br(), html.Br(),
                 "The sound intensity sensor on the metsense subsystem is called spv1840lr5h_b (it's the only one that starts with spv, so it should be easy enough to find). However, the data it produces is not very clear.",
                 " In order to resolve this, and make this data useful, data scientists will often use what is called a \"Moving Average\" to view general trends within the data.",
@@ -197,7 +195,14 @@ layout = html.Div(
                 html.Br(), html.Br(),
                 "(1 pts) Compare Monday and Sunday for that week. Which day is louder and why might that be?",
                 html.Br(), html.Br(),
-                "(1 pts) Compare Monday and Saturday for that week. Saturday is louder in the morning. Using Google Trends, why might this be?"
+                "(1 pts) Compare Monday and Saturday for that week. When is Saturday louder than Monday?", 
+                html.Br(), html.Br(),
+                "(6 pts) Using Google Maps traffic/popular times data and the metro schedule, briefly explain what trends most account for the noise on the subways system.",
+                html.Br(), html.Br(),
+                "(5 pts) How well correlated is the data from the sound sensor with the business/train activity of the area around it? Is the sensor data better correlated with train activity or the amount of people on the platform? Or is it not especially well correlated with either?",
+                html.H2("Part C"),
+                "The meteorlogical subsystem also has a 3-axis Accelerometer built-in (the sensor is called mma8452_q). It measures its acceleration in the x, y, and z directions. We can use this to measure vibration by seeing how much acceleration the sensor experiences in each direction over time.",
+                
             ]
         )
     ]
