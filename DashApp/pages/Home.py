@@ -396,4 +396,7 @@ def update_graph(current_parameter, processing_settings, day, current_sensor, cu
     ]
 )
 def click_selector(clickData):
+    if clickData == None:
+        raise dash.exceptions.PreventUpdate()
+
     return clickData['points'][0]['customdata'][0]
