@@ -148,8 +148,7 @@ scattermapbox.update_layout(
                 ),
                 "zoom" : 18 # set this to something reasonable for you and your computer. 
                 # As long as we can see all the nodes and don't need to move or zoom into the graph too much to find them all, I am happy with whatever you set the 'zoom' value to
-            },
-        clickmode="event+select"
+            }
     )
 
 layout = html.Div(
@@ -403,12 +402,3 @@ def update_graph(current_parameter, processing_settings, day, current_sensor, cu
     )
 
     return fig
-
-@app.callback(
-    Output('q3node_dropdown', 'value'),
-    [
-        Input('q3map', 'clickData')
-    ]
-)
-def click_selector(clickData):
-    return clickData['points'][0]['customdata'][0]
