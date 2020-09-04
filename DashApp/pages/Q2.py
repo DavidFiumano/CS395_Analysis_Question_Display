@@ -202,7 +202,15 @@ layout = html.Div(
                 "(5 pts) How well correlated is the data from the sound sensor with the business/train activity of the area around it? Is the sensor data better correlated with train activity or the amount of people on the platform? Or is it not especially well correlated with either?",
                 html.H2("Part C"),
                 "The meteorlogical subsystem also has a 3-axis Accelerometer built-in (the sensor is called mma8452_q). It measures its acceleration in the x, y, and z directions. We can use this to measure vibration by seeing how much acceleration the sensor experiences in each direction over time.",
-                
+                html.Br(), html.Br(),
+                "(5 pts) Look at Google Maps typical traffic data again. Does acceleration in the x or z direction correlate better with car traffic on Ashland Avenue?",
+                "Hint: Ashland Avenue is busiest around midday.",
+                html.Br(), html.Br(),
+                "(5 pts) Look at the acceleration data in the x, y and z directions with and without the moving average preprocessor enabled. Which version of the graphs are more useful for identifying when the station has the most trains going through it? Why?",
+                html.Br(),
+                "Hint: When looking at these graphs, it may be useful to compare monday to saturday/sunday. Remember that the two graphs do not always have the same scale on the y-axis, be sure to compare the actual values you are seeing.",
+                html.Br(), html.Br(),
+                "(10 pts) "
             ]
         )
     ]
