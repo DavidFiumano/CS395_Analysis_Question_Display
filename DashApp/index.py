@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 from .app import app
 
-from .pages import Home, Q1, Q2, Q3, Q4, Q5, Q6, Q7 # import other page layouts
+from .pages import Home, Q1, Q2, Q3 # import other page layouts
 
 dropdown_opts = [
     {
@@ -29,22 +29,6 @@ dropdown_opts = [
     {
         'label' : 'Question 3',
         'value' : 'Q3'
-    },
-    {
-        'label' : 'Question 4',
-        'value' : 'Q4'
-    },
-    {
-        'label' : 'Question 5',
-        'value' : 'Q5'
-    },
-    {
-        'label' : 'Question 6',
-        'value' : 'Q6'
-    },
-    {
-        'label' : 'Question 7',
-        'value' : 'Q7'
     }
 ]
 
@@ -72,13 +56,5 @@ def main_dropdown_callback(value):
         return Q2.layout
     elif value == 'Q3':
         return Q3.layout
-    elif value == 'Q4':
-        return Q4.layout
-    elif value == 'Q5':
-        return Q5.layout
-    elif value == 'Q6':
-        return Q6.layout
-    elif value == 'Q7':
-        return Q7.layout
     else:
         return html.H1("Invalid option selected")
