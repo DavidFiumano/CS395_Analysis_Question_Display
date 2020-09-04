@@ -152,6 +152,7 @@ scattermapbox.update_layout(
 
 layout = html.Div(
     [
+        html.H1("Question 2"),
         html.H2("Ashland Metro Station Map"),
         dcc.Graph(id="q2map", figure=scattermapbox),
         html.Div(
@@ -175,15 +176,13 @@ layout = html.Div(
         ),
         html.Div(
             [
-                html.H1("Question 2"),
-                "There is a Array of Things node placed at the Ashland Metro station. This is a station in the middle of the orange line.",
+                "There is a Array of Things node placed near the Ashland Metro station at the intersection of West 31st Place and Ashland Avenue, near the Stevenson Expressway overpass.",
                 " Question 2 concerns this node specifically. (see the map below)",
                 html.Br(),
-                "This metro schedule may be useful for answering some of the questions: https://www.transitchicago.com/assets/1/6/rail-tt_orange.pdf",
-                "You will also need to find this location on google maps and use some of google's analytics to answer some of the questions.",
+                "You will also need to find this location on google maps and use some of google's analytics data to answer some of the questions.",
                 html.Br(), html.Br(),
                 html.H2("Part A"),
-                "(1 pt) This node has two sensor subsystems on it, metsense and lightsense. Do both appear to be working properly? How do you know?",
+                "(5 pt) This node has two sensor subsystems on it, metsense and lightsense. Do both appear to be working properly? How do you know?",
                 html.Br(), html.Br(),
                 "The sound intensity sensor on the metsense subsystem is called spv1840lr5h_b (it's the only one that starts with spv, so it should be easy enough to find). However, the data it produces is not very clear.",
                 " In order to resolve this, and make this data useful, data scientists will often use what is called a \"Moving Average\" to view general trends within the data.",
@@ -191,26 +190,14 @@ layout = html.Div(
                 " To fix this, we will take a look at the moving average of the data. This will allow us to see more clearly how noisy the area around the sensor is over the course of a day.",
                 " To apply a moving average to your data, select the \"Moving Average\" from the bottom most dropdown menu.",
                 html.Br(), html.Br(),
-                "(1 pts) Enable the sound intensity sensor and select a moving average. Based on this information, when is this metro station the loudest?",
+                "(5 pts) Enable the sound intensity sensor and select a moving average. Based on this information, what day/time during the week is this intersection station the loudest?",
                 html.Br(), html.Br(),
-                "(1 pts) Compare Monday and Sunday for that week. Which day is louder and why might that be?",
-                html.Br(), html.Br(),
-                "(1 pts) Compare Monday and Saturday for that week. When is Saturday louder than Monday?", 
-                html.Br(), html.Br(),
-                "(6 pts) Using Google Maps traffic/popular times data and the metro schedule, briefly explain what trends most account for the noise on the subways system.",
-                html.Br(), html.Br(),
-                "(5 pts) How well correlated is the data from the sound sensor with the business/train activity of the area around it? Is the sensor data better correlated with train activity or the amount of people on the platform? Or is it not especially well correlated with either?",
-                html.H2("Part C"),
-                "The meteorlogical subsystem also has a 3-axis Accelerometer built-in (the sensor is called mma8452_q). It measures its acceleration in the x, y, and z directions. We can use this to measure vibration by seeing how much acceleration the sensor experiences in each direction over time.",
-                html.Br(), html.Br(),
-                "(5 pts) Look at Google Maps typical traffic data again. Does acceleration in the x or z direction correlate better with car traffic on Ashland Avenue?",
-                "Hint: Ashland Avenue is busiest around midday.",
-                html.Br(), html.Br(),
-                "(5 pts) Look at the acceleration data in the x, y and z directions with and without the moving average preprocessor enabled. Which version of the graphs are more useful for identifying when the station has the most trains going through it? Why?",
+                'https://www.transitchicago.com/assets/1/6/rail-tt_orange.pdf', html.Br(),
+                "(10 pts) Using Google Maps traffic data and chicago transit authorities' train schedule, briefly explain what trends most account for the noise around the node. Does this google maps data/the metro schedule match up well with the data you see on the sound sensor? If not, point to instances where there is lots of unexplained noise in the data.",
                 html.Br(),
-                "Hint: When looking at these graphs, it may be useful to compare monday to saturday/sunday. Remember that the two graphs do not always have the same scale on the y-axis, be sure to compare the actual values you are seeing.",
+                "Hint: Analyze the data day by day, time by time. See how well the graph corresponds with the traffic on Ashland Avenue/the express way. When those don't match up, does it match up well with the train schedule? There is a right and a wrong answer, but I have not provided you the analytics tools to answer that with actual statistical rigor. You will receive full credit if you can point to places where it matches up well with traffic or places where it doesn't match up all that well.",
                 html.Br(), html.Br(),
-                "(10 pts) "
+                "(10 pts) If this data does not match up well with data from any particular source, what could be done to the node to make it match up better? Could the node be moved somewhere? If the data does match up well, what additional sensors might let you figure out the specific source of the noise?",
             ]
         )
     ]
